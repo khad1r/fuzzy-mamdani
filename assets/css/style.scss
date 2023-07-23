@@ -1,0 +1,356 @@
+$font-stack: "Varela Round", sans-serif;
+$background-color: #f5f5f5;
+$primary-color: #75caf3;
+$tertiary-color: #4cb9c18e;
+$black-color: #222;
+
+@font-face {
+  font-family: "Varela Round";
+  font-style: normal;
+  font-weight: 400;
+  src: url(VarelaRound-Regular.ttf) format("truetype");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+.btn-outline-primary,
+.btn-outline-success,
+.font-weight-bold {
+  font-weight: bold;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  color: $black-color;
+  background: $background-color;
+  font-family: $font-stack;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  main {
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+  footer {
+    height: clamp(3rem, 8vh, 5rem);
+    width: 100%;
+
+    div {
+      height: 100%;
+      display: grid;
+      place-content: center;
+      color: $black-color;
+      background: $primary-color;
+      border-radius: 20px 20px 0 0;
+      font-size: clamp(0.1rem, 2vw, 0.9rem);
+      p {
+        font-weight: 600;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+      img {
+        // height: 1.5rem;
+        height: 1.5em;
+      }
+    }
+  }
+  &:has(nav) {
+    footer {
+      div {
+        box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+}
+
+a {
+  text-decoration: none;
+
+  &.card-home {
+    color: inherit;
+
+    &:hover {
+      color: $background-color;
+    }
+
+    .card {
+      border-radius: 8px;
+      box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+  .form-control {
+    border-color: $primary-color;
+    border-radius: 5px;
+
+    &:focus {
+      border-color: $tertiary-color;
+    }
+  }
+}
+
+.nav-link {
+  color: $primary-color;
+  &.active {
+    background: $primary-color !important;
+    border: none;
+    line-height: normal;
+
+    &:hover,
+    &:focus {
+      background: $tertiary-color;
+    }
+  }
+}
+.login-form {
+  width: 350px;
+  margin: 0 auto;
+  padding: 30px 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+
+  form {
+    color: #434343;
+    border-radius: 1px;
+    margin-bottom: 15px;
+    background: #fff;
+    border: 1px solid #f3f3f3;
+    border-radius: 20px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+  }
+
+  .form-control,
+  .btn {
+    min-height: 40px;
+    transition: all 0.5s;
+  }
+
+  .btn {
+    background: $primary-color;
+    border: none;
+    line-height: normal;
+
+    &:hover,
+    &:focus {
+      background: $tertiary-color;
+    }
+  }
+}
+
+.navbar {
+  background: $primary-color;
+  margin-bottom: 2rem;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.3);
+
+  .navbar-toggler {
+    border: none;
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    &:hover {
+      color: $background-color;
+    }
+
+    span {
+      font-weight: 900;
+      font-size: 1.5rem;
+    }
+  }
+
+  .dropdown-menu {
+    background-color: $primary-color;
+    border-radius: 0 0 20px 20px;
+    border: none;
+    min-width: 5rem;
+    right: 0;
+
+    .dropdown-item {
+      &:hover {
+        background-color: transparent;
+        color: $background-color;
+      }
+    }
+  }
+
+  .nav-link {
+    &:hover {
+      color: $background-color !important;
+    }
+  }
+
+  .navbar-brand,
+  .nav-link {
+    color: inherit !important;
+    font-weight: bold;
+
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
+.alert {
+  position: fixed;
+  width: 25vw;
+  bottom: 2rem;
+  right: 2rem;
+  border-radius: 2rem;
+  z-index: 1061;
+  box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.3);
+}
+
+.loading-Page {
+  position: fixed;
+  z-index: 2000;
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+
+  .spinner-border {
+    animation-duration: 1s;
+    width: 15rem;
+    height: 15rem;
+    border: 0.75em solid currentColor;
+    border-right-color: transparent;
+    -webkit-animation: 0.75s linear infinite spinner-border;
+    animation: 0.75s linear infinite spinner-border;
+  }
+}
+
+#form {
+  .form-group {
+    margin-bottom: 1.2rem;
+    border: 1px solid $black-color;
+    border-radius: 10px;
+    padding: 1.5rem;
+    label {
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      border-bottom: solid;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-color: $primary-color;
+      padding: 0.8rem 1.25rem;
+      background-color: $background-color;
+    }
+
+    .input-group {
+      .input-group-text {
+        border-color: $primary-color;
+      }
+    }
+    &:has(.notice) {
+      border: 1px solid red;
+    }
+    &:has(input:disabled),
+    &:has(textarea:disabled) {
+      border: 1px solid gray;
+      background-color: #c7c7c7;
+      .form-control {
+        background-color: #c7c7c7;
+      }
+    }
+  }
+
+  .btn {
+    background: $primary-color;
+    border: none;
+    line-height: normal;
+
+    &:hover,
+    &:focus {
+      background: $tertiary-color;
+    }
+  }
+  .hide {
+    display: none;
+  }
+}
+@media screen and (max-width: 992px) {
+  .alert {
+    position: fixed;
+    // width: 70vw;
+    bottom: 0.5rem;
+    right: 0;
+    width: 100vw;
+  }
+  .myTable {
+    border: 0;
+    &::before {
+      content: attr(data-label);
+      text-align: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      display: block;
+      background: $primary-color;
+      border: 1px solid $black-color;
+      padding: 0.2rem;
+    }
+    thead {
+      border: none;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      width: 1px;
+    }
+
+    tr {
+      border-block: 4px double $black-color;
+      border-inline: 1px solid $black-color;
+      display: block;
+      margin-bottom: 0.625rem;
+    }
+
+    td {
+      border-bottom: 1px solid $black-color;
+      display: flex;
+      // text-align: right !important;
+      min-height: 2rem;
+      justify-content: space-between;
+      align-content: center;
+      // padding-top: 1rem;
+      // padding-inline: 0.8rem;
+      // vertical-align: middle;
+
+      &::before {
+        content: attr(data-label);
+        // float: left;
+        font-weight: bold;
+        // text-transform: uppercase;
+      }
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      &.aksi {
+        text-align: center !important;
+      }
+    }
+  }
+}
