@@ -48,7 +48,7 @@
                 <td>[10 30 50]</td>
             </tr>
             <tr>
-                <td>Cukup/td>
+                <td>Cukup</td>
                 <td>[0-100]</td>
                 <td>[30 50 70]</td>
             </tr>
