@@ -61,7 +61,7 @@
                     <div class="form-group mb-3">
                         <label for="">
                             <strong>
-                                <h5><?= $sub_kriteria['kriteria'] ?></h5>
+                                <h5><?= $sub_kriteria['sub-kriteria'] ?></h5>
                             </strong>
                         </label>
                         <p class="mb-3"><?= $sub_kriteria['deskripsi'] ?></p>
