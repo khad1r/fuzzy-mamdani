@@ -52,6 +52,11 @@ class Main extends Controller
 
         $data['checklist'] = $this->model('Iso_model')->getChecklist();
         $subScore = $this->model('Kuisioner_model')->getScoreSubcriteria();
+        if (!count($subScore) > 0) {
+            $_SESSION['alert'] = array('warning', 'Data Kuisioner Masih Kosong');
+            App::Redirect('/Main');
+            exit;
+        }
         $score = [];
         foreach ($subScore as &$subscore) {
             $sumScore = [];
