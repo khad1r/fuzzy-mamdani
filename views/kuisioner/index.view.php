@@ -8,23 +8,16 @@
         </div>
     </div>
     <p>
-        Deskripsi Kuisioner
+        Kuesioner Tipe Gaya Belajar 
     </p>
     <hr>
-    <form method="post" id="form" autocomplete="off">
+    <form method="post" id="form" action="kuisioner/done" autocomplete="off">
         <div class="form-group">
             <label>
                 <strong>
                     <h4>Data Diri Responden</h4>
                 </strong>
             </label>
-            <div class="form-group mb-3">
-                <label for="">
-                    Email
-                </label>
-                <input type="email" required placeholder="name@email.com" name="email" class="form-control">
-                <?php App::InputValidator('email') ?>
-            </div>
             <div class="form-group mb-3">
                 <label for="">
                     Nama Lengkap
@@ -35,10 +28,10 @@
             </div>
             <div class="form-group mb-3">
                 <label for="">
-                    Program Studi
+                    Jenjang Sekolah
                 </label>
-                <input type="text" required placeholder="Program Studi" name="program_studi" class="form-control">
-                <?php App::InputValidator('program_studi') ?>
+                <input type="text" required placeholder="Jenjang Sekolah" name="jenjang_sekolah" class="form-control">
+                <?php App::InputValidator('jenjang_sekolah') ?>
 
             </div>
         </div>
@@ -53,30 +46,25 @@
                         <h4><?= $kriteria['kriteria'] ?></h4>
                     </strong>
                 </label>
-                <p class="mb-3"><?= $kriteria['deskripsi'] ?></p>
-                <?php while (isset($data['sub-kriteria'][$kriteria['kode'] . "_" . $i])) {
-                    $sub_kriteria = $data['sub-kriteria'][$kriteria['kode'] . "_" . $i++];
-                    $j = 1;
-                ?>
-                    <div class="form-group mb-3">
-                        <label for="">
-                            <strong>
-                                <h5><?= $sub_kriteria['sub-kriteria'] ?></h5>
-                            </strong>
-                        </label>
-                        <p class="mb-3"><?= $sub_kriteria['deskripsi'] ?></p>
-                        <hr>
-                        <hr>
-                        <?php while (isset($data['pertanyaan'][$sub_kriteria['kode'] . "_" . $j])) {
-                            $pertanyaan = $data['pertanyaan'][$sub_kriteria['kode'] . "_" . $j++];
+                        <?php while (isset($data['pertanyaan'][$kriteria['kode'] . "_" . $i])) {
+                            $pertanyaan = $data['pertanyaan'][$kriteria['kode'] . "_" . $i++];
                         ?>
                             <p class="mt-4"><?= $pertanyaan['pertanyaan'] ?></p>
-                            <input type="number" min="0" max="100" placeholder="0 - 100" class="form-control" inputmode="numeric" name="<?= $pertanyaan['kode'] ?>" required>
+                            <hr>
+                            <input type="radio" value="1" name="<?= $pertanyaan['kode'] ?>" required>
+                            <span>Sangat Tidak Setuju</span><br>
+                            <input type="radio" value="2" name="<?= $pertanyaan['kode'] ?>" required>
+                            <span>Tidak Setuju</span><br>
+                            <input type="radio" value="3" name="<?= $pertanyaan['kode'] ?>" required>
+                            <span>Netral</span><br>
+                            <input type="radio" value="4" name="<?= $pertanyaan['kode'] ?>" required>
+                            <span>Setuju</span><br>
+                            <input type="radio" value="5" name="<?= $pertanyaan['kode'] ?>" required>
+                            <span>Sangat Setuju</span><br>
                             <?php App::InputValidator($pertanyaan['kode']) ?>
+                            <hr>
 
                         <?php }  ?>
-                    </div>
-                <?php }  ?>
             </div>
             <hr>
         <?php } ?>

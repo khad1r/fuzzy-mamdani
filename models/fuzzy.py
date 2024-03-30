@@ -4,106 +4,239 @@ from skfuzzy import control as ctrl
 import matplotlib.pyplot as plt
 import argparse
 
-universe = np.arange(0, 101, 1)
-maturity_level0 = np.zeros_like(universe)
-domain={}
-domain['Sangat_Tidak_Baik'] = fuzz.trapmf(universe, [0, 0, 10, 30])
-domain['Tidak_Baik'] = fuzz.trimf(universe, [10, 30, 50])
-domain['Cukup'] = fuzz.trimf(universe, [30, 50, 70])
-domain['Baik'] = fuzz.trimf(universe, [50, 70, 90])
-domain['Sangat_Baik'] = fuzz.trapmf(universe, [70, 90, 100, 100])
+# Menentukan Variabel
+universe  = np.arange(0, 60, 1)
+hasil     = np.arange(0,100,1)
 
+universe_rendah = fuzz.trapmf(universe, [0, 0, 15, 30])
+universe_sedang = fuzz.trimf(universe, [15, 30, 45])
+universe_tinggi = fuzz.trapmf(universe, [30, 45, 60, 60])
+hasil_kd  = fuzz.trapmf(hasil, [0, 0, 10, 40])
+hasil_d   = fuzz.trimf(hasil, [10, 40, 70])
+hasil_sd  = fuzz.trapmf(hasil, [40, 70, 100, 100])
 
 def membership_function(value):
   result = {}
-  result['Sangat_Tidak_Baik'] = fuzz.interp_membership(universe, domain['Sangat_Tidak_Baik'], value)
-  result['Tidak_Baik'] = fuzz.interp_membership(universe, domain['Tidak_Baik'], value)
-  result['Cukup'] = fuzz.interp_membership(universe, domain['Cukup'], value)
-  result['Baik'] = fuzz.interp_membership(universe, domain['Baik'], value)
-  result['Sangat_Baik'] = fuzz.interp_membership(universe, domain['Sangat_Baik'], value)
-
+  result['rendah'] = fuzz.interp_membership(universe, universe_rendah, value)
+  result['sedang'] = fuzz.interp_membership(universe, universe_sedang, value)
+  result['tinggi'] = fuzz.interp_membership(universe, universe_tinggi, value)
+  
   return result
+
+def membership_function_hasil(value,himp):
+  interp = [0]
+  if himp == "kd" :
+    interp = fuzz.interp_universe(hasil, hasil_kd, value)
+  elif himp == "d" :
+    interp = fuzz.interp_universe(hasil, hasil_d, value)
+  elif himp == "sd" :
+    interp = fuzz.interp_universe(hasil, hasil_sd, value)
+  return interp[0] # kembalikan hasil pertama dari array
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("a", type=float, help="Funtional Suitability")
-parser.add_argument("b", type=float, help="Reliability")
-parser.add_argument("c", type=float, help="Usability")
+parser.add_argument("a", type=float, help="Visual")
+parser.add_argument("b", type=float, help="Auditori")
+parser.add_argument("c", type=float, help="Kinestetik")
 args = parser.parse_args()
 
-funtional_suitability_sim = membership_function(args.a)
-reliability_sim = membership_function(args.b)
-usability_sim = membership_function(args.c)
+visual_sim = membership_function(args.a)
+auditori_sim = membership_function(args.b)
+kinestetik_sim = membership_function(args.c)
+
+sd_visual         = [0]
+sd_auditori       = [0]
+sd_kinestetik     = [0]
+d_visual          = [0]
+d_auditori        = [0]
+d_kinestetik      = [0]
+kd_visual         = [0]
+kd_auditori       = [0]
+kd_kinestetik     = [0]
 
 # Rule Evaluation
-active_rule1 = np.fmin(np.fmin(funtional_suitability_sim["Sangat_Baik"],        np.fmax(usability_sim["Sangat_Baik"],       reliability_sim["Sangat_Baik"])),       domain['Sangat_Baik'])
-active_rule2 = np.fmin(np.fmin(funtional_suitability_sim['Baik'],               np.fmax(usability_sim["Sangat_Baik"],       reliability_sim["Sangat_Baik"])),       domain['Sangat_Baik'])
-active_rule3 = np.fmin(np.fmin(funtional_suitability_sim["Cukup"],              np.fmax(usability_sim['Baik'],              reliability_sim['Sangat_Baik'])),       domain['Baik'])
-active_rule4 = np.fmin(np.fmin(funtional_suitability_sim["Sangat_Tidak_Baik"],  np.fmax(usability_sim["Sangat_Baik"],       reliability_sim["Baik"])),              domain['Cukup'])
-active_rule5 = np.fmin(np.fmin(funtional_suitability_sim["Tidak_Baik"],         np.fmax(usability_sim["Cukup"],             reliability_sim["Cukup"])),             domain['Tidak_Baik'])
-active_rule6 = np.fmin(np.fmin(funtional_suitability_sim["Sangat_Baik"],        np.fmax(usability_sim['Baik'],              reliability_sim['Tidak_Baik'])),        domain['Baik'])
-active_rule7 = np.fmin(np.fmin(funtional_suitability_sim['Baik'],               np.fmax(usability_sim["Tidak_Baik"],        reliability_sim["Sangat_Tidak_Baik"])), domain['Tidak_Baik'])
-active_rule8 = np.fmin(np.fmin(funtional_suitability_sim["Cukup"],              np.fmax(usability_sim["Sangat_Tidak_Baik"], reliability_sim["Sangat_Baik"])),       domain['Tidak_Baik'])
+apred_rule = np.array([
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim["rendah"], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim['tinggi'], np.fmin(auditori_sim["rendah"], kinestetik_sim["sedang"])),
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim['sedang'], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim['sedang'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim['rendah'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim['sedang'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["tinggi"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['rendah'], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['rendah'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['rendah'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['sedang'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['sedang'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['sedang'], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim["rendah"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['sedang'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['sedang'], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['sedang'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['rendah'], kinestetik_sim['rendah'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['rendah'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['tinggi'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['rendah'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim['tinggi'], kinestetik_sim['sedang'])),
+    np.fmin(visual_sim["sedang"], np.fmin(auditori_sim["tinggi"], kinestetik_sim["rendah"]))
+])
 
 # Rule Activation
-maturity_Tidak_Baik           = np.fmax(active_rule5, active_rule7)  
-maturity_Cukup                = np.fmax(active_rule4, active_rule8)  
-maturity_Baik                 = np.fmax(active_rule3, active_rule6)  
-maturity_Sangat_Baik          = np.fmax(active_rule1, active_rule2)  
+z_rule_visual = np.array([
+    membership_function_hasil(apred_rule[0],"sd"),
+    membership_function_hasil(apred_rule[1],"sd"),
+    membership_function_hasil(apred_rule[2],"sd"),
+    membership_function_hasil(apred_rule[3],"sd"),
+    membership_function_hasil(apred_rule[4],"sd"),
+    membership_function_hasil(apred_rule[5],"sd"),
+    membership_function_hasil(apred_rule[6],"sd"),
+    membership_function_hasil(apred_rule[7],"sd"),
+    membership_function_hasil(apred_rule[8],"sd"),
+    membership_function_hasil(apred_rule[9],"kd"),
+    membership_function_hasil(apred_rule[10],"kd"),
+    membership_function_hasil(apred_rule[11],"kd"),
+    membership_function_hasil(apred_rule[12],"kd"),
+    membership_function_hasil(apred_rule[13],"kd"),
+    membership_function_hasil(apred_rule[14],"kd"),
+    membership_function_hasil(apred_rule[15],"kd"),
+    membership_function_hasil(apred_rule[16],"kd"),
+    membership_function_hasil(apred_rule[17],"kd"),
+    membership_function_hasil(apred_rule[18],"d"),
+    membership_function_hasil(apred_rule[19],"d"),
+    membership_function_hasil(apred_rule[20],"d"),
+    membership_function_hasil(apred_rule[21],"d"),
+    membership_function_hasil(apred_rule[22],"d"),
+    membership_function_hasil(apred_rule[23],"d"),
+    membership_function_hasil(apred_rule[24],"d"),
+    membership_function_hasil(apred_rule[25],"d"),
+    membership_function_hasil(apred_rule[26],"d")
+])
+z_rule_auditori = np.array([
+    membership_function_hasil(apred_rule[0],"kd"),
+    membership_function_hasil(apred_rule[1],"kd"),
+    membership_function_hasil(apred_rule[2],"d"),
+    membership_function_hasil(apred_rule[3],"d"),
+    membership_function_hasil(apred_rule[4],"kd"),
+    membership_function_hasil(apred_rule[5],"d"),
+    membership_function_hasil(apred_rule[6],"sd"),
+    membership_function_hasil(apred_rule[7],"sd"),
+    membership_function_hasil(apred_rule[8],"sd"),
+    membership_function_hasil(apred_rule[9],"kd"),
+    membership_function_hasil(apred_rule[10],"kd"),
+    membership_function_hasil(apred_rule[11],"kd"),
+    membership_function_hasil(apred_rule[12],"d"),
+    membership_function_hasil(apred_rule[13],"d"),
+    membership_function_hasil(apred_rule[14],"sd"),
+    membership_function_hasil(apred_rule[15],"sd"),
+    membership_function_hasil(apred_rule[16],"d"),
+    membership_function_hasil(apred_rule[17],"sd"),
+    membership_function_hasil(apred_rule[18],"d"),
+    membership_function_hasil(apred_rule[19],"d"),
+    membership_function_hasil(apred_rule[20],"d"),
+    membership_function_hasil(apred_rule[21],"kd"),
+    membership_function_hasil(apred_rule[22],"kd"),
+    membership_function_hasil(apred_rule[23],"sd"),
+    membership_function_hasil(apred_rule[24],"kd"),
+    membership_function_hasil(apred_rule[25],"sd"),
+    membership_function_hasil(apred_rule[26],"sd")
+])
+z_rule_kinestetik = np.array([
+    membership_function_hasil(apred_rule[0],"kd"),
+    membership_function_hasil(apred_rule[1],"d"),
+    membership_function_hasil(apred_rule[2],"kd"),
+    membership_function_hasil(apred_rule[3],"d"),
+    membership_function_hasil(apred_rule[4],"sd"),
+    membership_function_hasil(apred_rule[5],"sd"),
+    membership_function_hasil(apred_rule[6],"kd"),
+    membership_function_hasil(apred_rule[7],"d"),
+    membership_function_hasil(apred_rule[8],"sd"),
+    membership_function_hasil(apred_rule[9],"kd"),
+    membership_function_hasil(apred_rule[10],"d"),
+    membership_function_hasil(apred_rule[11],"sd"),
+    membership_function_hasil(apred_rule[12],"sd"),
+    membership_function_hasil(apred_rule[13],"d"),
+    membership_function_hasil(apred_rule[14],"sd"),
+    membership_function_hasil(apred_rule[15],"d"),
+    membership_function_hasil(apred_rule[16],"kd"),
+    membership_function_hasil(apred_rule[17],"kd"),
+    membership_function_hasil(apred_rule[18],"d"),
+    membership_function_hasil(apred_rule[19],"kd"),
+    membership_function_hasil(apred_rule[20],"sd"),
+    membership_function_hasil(apred_rule[21],"kd"),
+    membership_function_hasil(apred_rule[22],"sd"),
+    membership_function_hasil(apred_rule[23],"sd"),
+    membership_function_hasil(apred_rule[24],"d"),
+    membership_function_hasil(apred_rule[25],"d"),
+    membership_function_hasil(apred_rule[26],"kd")
+]) 
 
 # Visualize this
 
-fig, ax0 = plt.subplots(figsize=(8, 3))
-ax0.plot(universe, domain['Sangat_Tidak_Baik'], 'b', linewidth=0.5, linestyle='--', )
+# fig, (ax0, ax1, ax2, ax3) = plt.subplots(nrows=4, figsize=(7, 9))
+# ax0.plot(universe, universe_rendah, 'b', linewidth=1.5, label='Rendah')
+# ax0.plot(universe, universe_sedang, 'g', linewidth=1.5, label='Sedang')
+# ax0.plot(universe, universe_tinggi, 'r', linewidth=1.5, label='Tinggi')
+# ax0.set_title('Visual')
+# ax0.legend()
 
-ax0.fill_between(universe, maturity_level0, maturity_Tidak_Baik, facecolor='g', alpha=0.7)
-ax0.plot(universe, domain['Tidak_Baik'], 'g', linewidth=0.5, linestyle='--')
+# ax1.plot(universe, universe_rendah, 'b', linewidth=1.5, label='Rendah')
+# ax1.plot(universe, universe_sedang, 'g', linewidth=1.5, label='Sedang')
+# ax1.plot(universe, universe_tinggi, 'r', linewidth=1.5, label='Tinggi')
+# ax1.set_title('Auditori')
+# ax1.legend()
 
-ax0.fill_between(universe, maturity_level0, maturity_Cukup, facecolor='r', alpha=0.7)
-ax0.plot(universe, domain['Cukup'], 'r', linewidth=0.5, linestyle='--')
+# ax2.plot(universe, universe_rendah, 'b', linewidth=1.5, label='Rendah')
+# ax2.plot(universe, universe_sedang, 'g', linewidth=1.5, label='Sedang')
+# ax2.plot(universe, universe_tinggi, 'r', linewidth=1.5, label='Tinggi')
+# ax2.set_title('Kinestetik')
+# ax2.legend()
 
-ax0.fill_between(universe, maturity_level0, maturity_Baik, facecolor='y', alpha=0.7)
-ax0.plot(universe, domain['Baik'], 'y', linewidth=0.5, linestyle='--')
+# ax3.plot(hasil, hasil_kd, 'b', linewidth=1.5, label='kurang_direkomendasikan')
+# ax3.plot(hasil, hasil_d, 'g', linewidth=1.5, label='direkomendasikan')
+# ax3.plot(hasil, hasil_sd, 'r', linewidth=1.5, label='sangat_direkomendasikan')
+# ax3.set_title('Tipe Gaya Belajar [Visual, Auditori, Kinestetik]')
+# ax3.legend()
 
-ax0.fill_between(universe, maturity_level0, maturity_Sangat_Baik, facecolor='m', alpha=0.7)
-ax0.plot(universe, domain['Sangat_Baik'], 'm', linewidth=0.5, linestyle='--')
+# # Turn off top/right axes
+# for ax in (ax0, ax1, ax2, ax3):
+#   ax.spines['top'].set_visible(False)
+#   ax.spines['right'].set_visible(False)
+#   ax.get_xaxis().tick_bottom()
+#   ax.get_yaxis().tick_left()
 
-ax0.set_title('Komposisi Keseluruhan aturan Fuzzy Maturity')
-# Turn off top/right axes
-for ax in (ax0,):
-  ax.spines['top'].set_visible(False)
-  ax.spines['right'].set_visible(False)
-  ax.get_xaxis().tick_bottom()
-  ax.get_yaxis().tick_left()
-plt.tight_layout()
-plt.savefig('assets/export/membership_activity.png', dpi=300, bbox_inches='tight')
+# plt.tight_layout()
+# plt.savefig('assets/export/membership_activity.png', dpi=300, bbox_inches='tight')
 
-# Aggregate all three output membership functions together
-aggregated = np.fmax(maturity_Tidak_Baik,np.fmax(maturity_Cukup, np.fmax(maturity_Baik, maturity_Sangat_Baik)))
-# Calculate defuzzified result
-maturity_level = fuzz.defuzz(universe, aggregated, 'mom')
+# Defuzzifikasi
+z_visual      = sum(apred_rule*z_rule_visual)     / sum(apred_rule)
+z_auditori    = sum(apred_rule*z_rule_auditori)   / sum(apred_rule)
+z_kinestetik  = sum(apred_rule*z_rule_kinestetik) / sum(apred_rule)
 
-maturity_level_activation = fuzz.interp_membership(universe, aggregated, maturity_level) # for plot
-# Visualize this
-fig, ax0 = plt.subplots(figsize=(8, 3))
+print(z_visual,z_auditori,z_kinestetik)
+# # Output untuk Tipe Gaya Belajar Visual
+# if z_visual <= 10 :
+#     print("Tipe Gaya Belajar Visual : Kurang Direkomendasikan")
+# if z_visual > 10 and z_visual <= 70 :
+#     print("Tipe Gaya Belajar Visual : Direkomendasikan")
+# if z_visual > 70 and z_visual < 101 :
+#     print("Tipe Gaya Belajar Visual : Sangat Direkomendasikan")
 
-ax0.plot(universe, domain['Sangat_Tidak_Baik'], 'b', linewidth=0.5, linestyle='--', )
-ax0.plot(universe, domain['Tidak_Baik'], 'g', linewidth=0.5, linestyle='--')
-ax0.plot(universe, domain['Cukup'], 'r', linewidth=0.5, linestyle='--')
-ax0.plot(universe, domain['Baik'], 'y', linewidth=0.5, linestyle='--')
-ax0.plot(universe, domain['Sangat_Baik'], 'm', linewidth=0.5, linestyle='--')
+# # Output untuk Tipe Gaya Belajar Auditori
+# if z_auditori <= 10 :
+#     print("Tipe Gaya Belajar auditori : Kurang Direkomendasikan")
+# if z_auditori > 10 and z_auditori <= 70 :
+#     print("Tipe Gaya Belajar auditori : Direkomendasikan")
+# if z_auditori > 70 and z_auditori < 101 :
+#     print("Tipe Gaya Belajar auditori : Sangat Direkomendasikan")
 
-ax0.fill_between(universe, maturity_level0, aggregated, facecolor='Orange', alpha=0.7)
-
-ax0.plot([maturity_level, maturity_level], [0, maturity_level_activation], 'k', linewidth=1.5, alpha=0.9)
-
-ax0.set_title('Daerah Hasil Komposisi Defuzzyfication Maturity')
-# Turn off top/right axes
-for ax in (ax0,):
-  ax.spines['top'].set_visible(False)
-  ax.spines['right'].set_visible(False)
-  ax.get_xaxis().tick_bottom()
-  ax.get_yaxis().tick_left()
-plt.tight_layout()
-plt.savefig('assets/export/result_mom.png', dpi=300, bbox_inches='tight')
-print(maturity_level)
+# # Output untuk Tipe Gaya Belajar Kinestetik
+# if z_kinestetik <= 10 :
+#     print("Tipe Gaya Belajar kinestetik : Kurang Direkomendasikan")
+# if z_kinestetik > 10 and z_kinestetik <= 70 :
+#     print("Tipe Gaya Belajar kinestetik : Direkomendasikan")
+# if z_kinestetik > 70 and z_kinestetik < 101 :
+#     print("Tipe Gaya Belajar kinestetik : Sangat Direkomendasikan")

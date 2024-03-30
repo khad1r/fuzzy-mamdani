@@ -1,9 +1,24 @@
 <div class="container" id="form">
+    <table>
+        <th>Nomor</th>
+        <th>Nama</th>
+         <th>Jenjang Sekolah</th>
+        <th>Gaya Belajar</th>
+    </table>
+
     <?php
     $graph = [];
+    while($r=$data-> fetch_array()){
+
+    }
     foreach ($data['checklist'] as $kriteria) { ?>
         <div class="form-group">
+            
+
+       
+            
             <label>
+
                 <strong>
                     <h4><?= $kriteria['kriteria'] ?></h4>
                 </strong>
@@ -35,7 +50,7 @@
             <?php } ?>
             <hr class="mt-5">
             <hr>
-            <p class="my-3">Kemudian Didapatkan Rata Rata Untuk Kriteria <?= $kriteria['kriteria'] ?> Adalah <b><?= $kriteria['total'] ?></b></p>
+            <p class="my-3">Kemudian Didapatkan Jumlah Untuk Tipe Gaya Belajar <?= $kriteria['kriteria'] ?> Adalah <b><?= $kriteria['total'] ?></b></p>
             <canvas id="<?= $kriteria['kode'] ?>" class="grafick"></canvas>
         </div>
         <hr>

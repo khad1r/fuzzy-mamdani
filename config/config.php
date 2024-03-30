@@ -1,7 +1,7 @@
 <?php
 
-define('BASEURL', "https://{$_SERVER['HTTP_HOST']}/fuzzy-mamdani");
-define('WEB_TITLE', 'Fuzzy Mamdani');
+define('BASEURL', "http://localhost/fuzzy-tsukamoto/");
+define('WEB_TITLE', 'Fuzzy Tsukamoto');
 define('FIRST_DATE', '2022-09-06');
 
 //DB

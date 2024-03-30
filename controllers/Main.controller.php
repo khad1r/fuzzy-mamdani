@@ -9,9 +9,9 @@ class Main extends Controller
             App::Redirect('/Logout');
             exit;
         }
-        $Iso_model = $this->model('Iso_model');
-        $data['checklist'] = $Iso_model->getCriteria();
-        $data['sub-kriteria'] = $Iso_model->getSubCriteria();
+        $gayabelajar_model = $this->model('gayabelajar_model');
+        $data['checklist'] = $gayabelajar_model->getCriteria();
+        $data['sub-kriteria'] = $gayabelajar_model->getSubCriteria();
         $data['pertanyaan'] = $this->model('Pertanyaan_model')->getPertanyaan();
         $data['colspan'] = [];
 
@@ -50,13 +50,8 @@ class Main extends Controller
             exit;
         }
 
-        $data['checklist'] = $this->model('Iso_model')->getChecklist();
+        $data['checklist'] = $this->model('gayabelajar_model')->getChecklist();
         $subScore = $this->model('Kuisioner_model')->getScoreSubcriteria();
-        if (!count($subScore) > 0) {
-            $_SESSION['alert'] = array('warning', 'Data Kuisioner Masih Kosong');
-            App::Redirect('/Main');
-            exit;
-        }
         $score = [];
         foreach ($subScore as &$subscore) {
             $sumScore = [];
@@ -100,14 +95,14 @@ class Main extends Controller
             exit;
         }
         $fuzzy_model = $this->model('Fuzzy_model');
-        $maturity = $fuzzy_model->getMaturity()[0]['maturity'] ?? '';
-        if (empty($maturity)) {
-            $maturity = $fuzzy_model->calculateFuzzy($score['FS'], $score['R'], $score['U']);
+        $hasil = $fuzzy_model->getHasil()[0]['hasil'] ?? '';
+        if (empty($hasil)) {
+            $hasil = $fuzzy_model->calculateFuzzy($score['FS'], $score['R'], $score['U']);
         }
 
-        $data['maturity'] = $maturity;
+        $data['hasil'] = $hasil;
         $data['score'] = $score;
-        $data['kriteria'] = $this->model('Iso_model')->getCriteria();
+        $data['kriteria'] = $this->model('gayabelajar_model')->getCriteria();
 
         $data['membership_activity'] = '\assets\export\membership_activity.png';
         $data['membership_function'] = '\assets\export\membership_function.png';

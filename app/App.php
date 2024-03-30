@@ -58,11 +58,11 @@ class App
             unset($_SESSION['alert']);
         }
     }
-    public static function CheckUser(...$level)
-    {
-        if (empty($level)) return isset($_SESSION['user']);
-        return isset($_SESSION['user']) && in_array($_SESSION['user']['level_user'], $level);
-    }
+    // public static function CheckUser(...$level)
+    // {
+    //     if (empty($level)) return isset($_SESSION['user']);
+    //     return isset($_SESSION['user']) && in_array($_SESSION['user']['level_user'], $level);
+    // }
     public static function InputValidator($input)
     {
         if (isset($_SESSION['InputError'][$input])) {

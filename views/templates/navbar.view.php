@@ -8,12 +8,7 @@
         </a>
         <!-- Right elements -->
         <div class="d-flex align-items-center">
-            <?php if (!App::CheckUser()) { ?>
-                <a class="nav-link" href="<?= BASEURL ?>/Login/">Login</a>
-            <?php
-            } else { ?>
-                <a class="nav-link" href="<?= BASEURL ?>/Logout/">Logout</a>
-            <?php } ?>
+            <a class="nav-link" href="<?= BASEURL ?>/Kuisioner/rekap">Rekap</a>
         </div>
         <!-- Right elements -->
     </div>

@@ -17,7 +17,7 @@
                 </tr>
             <?php } ?>
             <tr>
-                <td>Maturity Level</td>
+                <td>Tipe Gaya Belajar</td>
                 <td><b>OUTPUT</b></td>
             </tr>
         </table>
@@ -37,30 +37,20 @@
                 <td>Domain</td>
             </tr>
             <tr>
-                <td rowspan="5"><?= "&neArr;" . implode(',<br>&neArr;', $crite) ?>,<br>&seArr;Maturity Level </td>
-                <td>Sangat Tidak Baik</td>
+                <td rowspan="5"><?= "&neArr;" . implode(',<br>&neArr;', $crite) ?>,<br>&seArr;Tipe Gaya Belajar </td>
+                <td>Rendah</td>
                 <td>[0-100]</td>
-                <td>[0 0 10 30]</td>
+                <td>[0 0 15 30]</td>
             </tr>
             <tr>
-                <td>Tidak Baik</td>
+                <td>Sedang</td>
                 <td>[0-100]</td>
-                <td>[10 30 50]</td>
+                <td>[15 30 45]</td>
             </tr>
             <tr>
-                <td>Cukup</td>
+                <td>Tinggi</td>
                 <td>[0-100]</td>
-                <td>[30 50 70]</td>
-            </tr>
-            <tr>
-                <td>Baik</td>
-                <td>[0-100]</td>
-                <td>[50 70 90]</td>
-            </tr>
-            <tr>
-                <td>Sangat Baik</td>
-                <td>[0-100]</td>
-                <td>[80 90 100 100]</td>
+                <td>[30 45 60 60]</td>
             </tr>
         </table>
     </div>
@@ -80,7 +70,7 @@
                 <h4>Rule Fuzzy</h4>
             </strong>
         </label>
-        <table class="table table-responsive table-hover table-sm table-bordered myTable">
+        <!-- <table class="table table-responsive table-hover table-sm table-bordered myTable">
             <?php
 
             $rules = [
@@ -99,13 +89,13 @@
                     <td><?= $rule ?></td>
                 </tr>
             <?php } ?>
-        </table>
+        </table> -->
     </div>
     <hr>
     <div class="form-group">
         <label>
             <strong>
-                <h4>Defuzzyfikasi Komposisi Aturan</h4>
+                <h4>Defuzzyfikasi</h4>
             </strong>
         </label>
         <img src="<?= BASEURL . $data['membership_activity'] ?>" class="img-fluid img-responsive" style="width:100%">
@@ -114,20 +104,11 @@
     <div class="form-group">
         <label>
             <strong>
-                <h4>Hasil Komposisi Defuzzyfikasi Mean Of Maximum</h4>
-            </strong>
-        </label>
-        <img src="<?= BASEURL . $data['result_mom'] ?>" class="img-fluid img-responsive" style="width:100%">
-    </div>
-    <hr>
-    <div class="form-group">
-        <label>
-            <strong>
                 <h4>Hasil Fuzzy Mamdani</h4>
             </strong>
         </label>
-        <p class="mb-3">Maturity Level yang didapatkan adalah : </p>
-        <h3><b><?= $data['maturity'] ?></b></h3>
+        <p class="mb-3">Gaya Belajar Anda adalah : </p>
+        <h3><b><?= $data['hasil'] ?></b></h3>
     </div>
 </div>
 <script>
